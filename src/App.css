@@ -1,38 +1,131 @@
-.App {
-  text-align: center;
+* {
+  font-family: Roboto, sans-serif !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: Roboto, sans-serif !important;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ant-layout {
+  min-height: 100vh;
 }
 
-.App-header {
-  background-color: #282c34;
+main {
+  background-color: transparent !important;
+}
+
+/* Auth Page */
+
+.login-page,
+.forgot-password-page,
+.reset-password-page {
+  background-color: #f8f9fa; /* Màu cam nhạt */
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.card {
+  border-radius: 20px !important;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.card-body {
+  padding: 40px;
+}
+
+/* Admin page */
+
+.demo-logo-vertical {
+  height: 32px;
+  margin: 16px;
+  background: #ffd333;
+  border-radius: 6px;
+}
+
+.demo-logo-vertical h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4d4b4b;
+  margin-bottom: 0;
+}
+.demo-logo-vertical h2 {
+  font-weight: 700;
+  color: #4d4b4b;
+}
+
+.toolbar-user {
+  height: 64px;
+}
+
+.toolbar-user button:hover {
+  background-color: #ebedf0;
+}
+
+.toolbar-user button {
+  border: none;
+}
+
+.toolbar-user .toolbar-user_avatar {
+  font-size: 2rem;
+  border-radius: max(0.125rem, 0.1em);
+}
+
+.toolbar-user .toolbar-user_avatar img {
+  font-size: 2rem;
+  border-radius: inherit;
+  height: 40px;
+  width: 40px;
+}
+
+.toolbar-user .toolbar-user_title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.toolbar-user .toolbar-user_subtitle {
+  width: 200px;
+  color: #6c757d;
+  font-size: 0.8125rem;
+  margin-top: 0.325rem;
+  line-height: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar_right .btn-notify {
+  border: none;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  position: relative;
+}
+
+.toolbar_right .btn-notify:hover {
+  background-color: #ebedf0;
+}
+
+.toolbar_right .btn-notify span {
+  background: #ffd333;
+  border-radius: 0.5rem;
+  color: #3d464d;
+  font-size: 10px;
+  font-weight: 700;
+  height: 1rem;
+  width: 1rem;
+  position: absolute;
+  text-align: center;
+  top: 0.2rem;
+  right: 0.2rem;
+}
+
+/* Dashbord */
+.chart-profit {
+  height: 20rem;
 }
