@@ -1,8 +1,45 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import CustomerInput from "../components/CustomInput";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../features/auth/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let schema = Yup.object({
+    email: Yup.string()
+      .email("Địa chỉ email không hợp lệ")
+      .required("Cần nhập email"),
+    password: Yup.string().required("Cần nhập mật khẩu"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      dispatch(login(values));
+    },
+  });
+
+  const authState = useSelector((state) => state);
+
+  const { user, isError, isSuccess, isLoading, message } = authState.auth;
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("admin");
+    } else {
+      navigate("");
+    }
+  }, [user, isError, isSuccess, isLoading, navigate]);
+
   return (
     <div className="login-page">
       <div className="container">
@@ -14,15 +51,45 @@ const Login = () => {
                 <p className="text-muted text-center mb-5">
                   Đăng nhập vào tài khoản của bạn để tiếp tục
                 </p>
-                <form>
-                  <div className="mb-3">
-                    <CustomerInput type="text" label="Email" id="email" />
-                  </div>
-                  <div className="mb-3">
-                    <CustomerInput type="password" label="Mật khẩu" id="pass" />
-                  </div>
+                <div className="error text-center">
+                  {message.message === "Rejected"
+                    ? "Bạn không phải quản trị viên"
+                    : ""}
+                </div>
+                <form onSubmit={formik.handleSubmit}>
+                  <CustomerInput
+                    i_class="mt-3"
+                    name="email"
+                    type="text"
+                    label="Email"
+                    i_id="email"
+                    val={formik.values.email}
+                    onCh={formik.handleChange("email")}
+                    onBl={formik.handleBlur}
+                  />
+                  {formik.touched.email && formik.errors.email ? (
+                    <div className="error">{formik.errors.email}</div>
+                  ) : null}
+
+                  <CustomerInput
+                    i_class="mt-3"
+                    name="password"
+                    type="password"
+                    label="Mật khẩu"
+                    i_id="pass"
+                    val={formik.values.password}
+                    onCh={formik.handleChange("password")}
+                    onBl={formik.handleBlur}
+                  />
+                  {formik.touched.password && formik.errors.password ? (
+                    <div className="error">{formik.errors.password}</div>
+                  ) : null}
+
                   <div className="mb-3 text-end">
-                    <Link to="/reset-password" className="text-decoration-none">
+                    <Link
+                      to="/forgot-password"
+                      className="text-decoration-none"
+                    >
                       Quên mật khẩu?
                     </Link>
                   </div>

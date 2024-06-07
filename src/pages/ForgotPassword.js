@@ -15,7 +15,7 @@ const ForgotPassword = () => {
                 </p>
                 <form>
                   <div className="mb-3">
-                    <CustomerInput type="text" label="Email" id="email" />
+                    <CustomerInput type="text" label="Email" i_id="email" />
                   </div>
                   <div className="mb-3 d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary mt-4">

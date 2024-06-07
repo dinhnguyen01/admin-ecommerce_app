@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { useNavigate, Outlet } from "react-router-dom";
@@ -63,7 +64,7 @@ const MainLayout = () => {
               label: "Mục lục ",
               children: [
                 {
-                  key: "product",
+                  key: "add-product",
                   icon: <FaCartPlus className="fs-5" />,
                   label: "Thêm sản phẩm",
                 },
@@ -73,7 +74,7 @@ const MainLayout = () => {
                   label: "Danh sách sản phẩm",
                 },
                 {
-                  key: "brand",
+                  key: "add-brand",
                   icon: <SlBadge className="fs-5" />,
                   label: "Thêm thương hiệu",
                 },
@@ -83,17 +84,17 @@ const MainLayout = () => {
                   label: "Danh sách thương hiệu",
                 },
                 {
-                  key: "category",
+                  key: "add-product-category",
                   icon: <TbCategoryPlus className="fs-5" />,
                   label: "Thêm danh mục",
                 },
                 {
-                  key: "category-list",
+                  key: "product-category-list",
                   icon: <TbCategory className="fs-5" />,
                   label: "Danh sách danh mục",
                 },
                 {
-                  key: "color",
+                  key: "add-color",
                   icon: <IoMdColorFill className="fs-5" />,
                   label: "Thêm màu sắc",
                 },
@@ -125,7 +126,7 @@ const MainLayout = () => {
                   label: "Danh sách tin tức",
                 },
                 {
-                  key: "blog-category",
+                  key: "add-blog-category",
                   // icon: <FaMicroblog className="fs-5" />,
                   label: "Thêm danh mục tin tức",
                 },
@@ -171,8 +172,15 @@ const MainLayout = () => {
                 </span>
               </button>
             </div>
-            <div className="toolbar-user d-flex align-items-center justify-content-center">
-              <button className="d-flex align-items-center btn px-2 me-4">
+            <div
+              className="toolbar-user d-flex align-items-center justify-content-center"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <button
+                type="button"
+                className="d-flex align-items-center btn px-2 me-4 dropdown-toggle"
+              >
                 <div className="d-flex gap-2 align-items-center">
                   <div className="toolbar-user_avatar d-flex justify-content-center">
                     <img
@@ -189,6 +197,47 @@ const MainLayout = () => {
                   </div>
                 </div>
               </button>
+              <ul className="dropdown-menu">
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="#"
+                    style={{ height: "auto", lineHeight: "1.5" }}
+                  >
+                    Thông tin
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="#"
+                    style={{ height: "auto", lineHeight: "1.5" }}
+                  >
+                    Tin nhắn
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="#"
+                    style={{ height: "auto", lineHeight: "1.5" }}
+                  >
+                    Cài đặt
+                  </Link>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <Link
+                    className="dropdown-item"
+                    to="#"
+                    style={{ height: "auto", lineHeight: "1.5" }}
+                  >
+                    Đăng xuất
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </Header>

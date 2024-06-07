@@ -1,19 +1,75 @@
-* {
-  font-family: Roboto, sans-serif !important;
-}
-
 body {
-  font-family: Roboto, sans-serif !important;
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   margin: 0;
   padding: 0;
 }
 
+:root {
+  --color-212529: #212529;
+  --color-ffd333: #ffd333;
+  --color-47ad24: #47ad24;
+  --color-e52e2e: #e52e2e;
+  --color-828599: #828599;
+  --color-3d464d: #3d464d;
+  --color-c3d4da: #c3d4da;
+}
+
 .ant-layout {
   min-height: 100vh;
+  font-family: inherit;
+}
+
+:where(.css-dev-only-do-not-override-3rel02).ant-menu,
+:where(.css-dev-only-do-not-override-3rel02)[class^="ant-table"],
+:where(.css-dev-only-do-not-override-3rel02).ant-table-wrapper .ant-table {
+  font-family: inherit;
 }
 
 main {
+  height: 80vh;
+  overflow-y: scroll;
   background-color: transparent !important;
+}
+
+main::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Custom input */
+.form-floating > .form-control:not(:placeholder-shown) ~ label::after {
+  background-color: transparent !important;
+}
+
+.form-control:focus {
+  /* border-color: transparent !important; */
+  box-shadow: none !important;
+}
+
+/* Rich text editor */
+
+.wrapper-class {
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+.editor-class {
+  background-color: white;
+  padding: 1rem;
+  border: 1px solid #ccc;
+}
+.toolbar-class {
+  border: 1px solid #ccc;
+}
+
+.rdw-dropdown-selectedtext {
+  text-decoration: none;
+  color: black;
+}
+
+.rdw-dropdown-selectedtext:hover {
+  color: black;
 }
 
 /* Auth Page */
@@ -36,6 +92,11 @@ main {
   padding: 40px;
 }
 
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: -15px;
+}
 /* Admin page */
 
 .demo-logo-vertical {
@@ -90,8 +151,6 @@ main {
   width: 200px;
   color: #6c757d;
   font-size: 0.8125rem;
-  margin-top: 0.325rem;
-  line-height: 1;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -126,6 +185,35 @@ main {
 }
 
 /* Dashbord */
+
+/* header user */
+.dropdown-item:active {
+  background-color: #e6e8eb;
+  color: #212529;
+}
+
+/* header user end */
+
 .chart-profit {
-  height: 20rem;
+  width: 100%;
+  height: 450px; /* Adjust this value as needed */
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-profit .chart-profit_wrapper {
+  width: 100%;
+  height: 350px;
+}
+
+.custom-tooltip {
+  padding: 0px 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.custom-tooltip .label {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
 }

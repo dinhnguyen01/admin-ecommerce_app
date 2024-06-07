@@ -7,9 +7,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Table } from "antd";
+
 const Dashboard = () => {
   const data = [
     {
@@ -50,7 +51,7 @@ const Dashboard = () => {
     },
     {
       month: "Oct",
-      profit: 18,
+      profit: 89,
     },
     {
       month: "Nov",
@@ -61,6 +62,61 @@ const Dashboard = () => {
       profit: 34,
     },
   ];
+
+  const monthMapping = {
+    Jan: 1,
+    Feb: 2,
+    Mar: 3,
+    Apr: 4,
+    May: 5,
+    Jun: 6,
+    Jul: 7,
+    Aug: 8,
+    Sep: 9,
+    Oct: 10,
+    Nov: 11,
+    Dec: 12,
+  };
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const monthNumber = monthMapping[label];
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{`Tháng ${monthNumber}: ${payload[0].value} triệu`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "key",
+    },
+    {
+      title: "Tên KH",
+      dataIndex: "name",
+    },
+    {
+      title: "Sản phẩm",
+      dataIndex: "product",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+    },
+  ];
+  const data1 = [];
+  for (let i = 1; i < 46; i++) {
+    data1.push({
+      key: i,
+      name: `Edward King ${i}`,
+      product: 32,
+      status: `London, Park Lane no. ${i}`,
+    });
+  }
 
   return (
     <div>
@@ -105,32 +161,50 @@ const Dashboard = () => {
       </div>
       <div className="mt-4 chart-profit">
         <h3 className="mb-4">Thống kê thu nhập</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5,
-              right: 5,
-              left: 5,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" tickSize={10} axisLine={false} />
-            <YAxis tickCount={5} axisLine={false} tickSize={0} />
-            <Tooltip cursor={{ fill: "transparent" }} />
-            <Bar
-              dataKey="profit"
-              fill="#8884d8"
-              isAnimationActive={false}
-              barSize={30}
-              radius={[4, 4, 4, 4]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <p className="ms-4 mb-2">Triệu đồng</p>
+        <div className="chart-profit_wrapper">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              width={500}
+              height={300}
+              data={data}
+              margin={{
+                top: 5,
+                right: 5,
+                left: 5,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" tickSize={10} axisLine={false} />
+              <YAxis tickCount={5} axisLine={false} tickSize={0} />
+              <Tooltip
+                cursor={{ fill: "transparent" }}
+                content={<CustomTooltip />}
+              />
+              <Bar
+                dataKey="profit"
+                fill="#8884d8"
+                isAnimationActive={false}
+                barSize={35}
+                radius={[4, 4, 4, 4]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
+      <div className="mt-5">
+        <h3 className="mb-4">Đơn đặt hàng gần đây</h3>
+        <div>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={data1}
+            pagination={{ pageSize: 7 }}
+          />
+        </div>
+      </div>
+      {/* <div className="d-flex gap-3 justify-content-between"></div> */}
     </div>
   );
 };

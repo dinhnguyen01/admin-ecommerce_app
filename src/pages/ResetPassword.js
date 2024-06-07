@@ -16,13 +16,13 @@ const ResetPassword = () => {
                 </p>
                 <form>
                   <div className="mb-3">
-                    <CustomerInput type="text" label="Mật khẩu" id="pass" />
+                    <CustomerInput type="text" label="Mật khẩu" i_id="pass" />
                   </div>
                   <div className="mb-3">
                     <CustomerInput
                       type="password"
                       label="Nhập lại mật khẩu"
-                      id="re-pass"
+                      i_id="re-pass"
                     />
                   </div>
                   <div className="mb-3 d-flex justify-content-center">
