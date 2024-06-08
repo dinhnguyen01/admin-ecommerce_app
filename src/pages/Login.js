@@ -28,9 +28,9 @@ const Login = () => {
     },
   });
 
-  const authState = useSelector((state) => state);
+  const authState = useSelector((state) => state.auth);
 
-  const { user, isError, isSuccess, isLoading, message } = authState.auth;
+  const { user, isError, isSuccess, isLoading, message } = authState;
 
   useEffect(() => {
     if (isSuccess) {
@@ -65,7 +65,7 @@ const Login = () => {
                     i_id="email"
                     val={formik.values.email}
                     onCh={formik.handleChange("email")}
-                    onBl={formik.handleBlur}
+                    // onBl={formik.handleBlur}
                   />
                   {formik.touched.email && formik.errors.email ? (
                     <div className="error">{formik.errors.email}</div>
@@ -79,7 +79,7 @@ const Login = () => {
                     i_id="pass"
                     val={formik.values.password}
                     onCh={formik.handleChange("password")}
-                    onBl={formik.handleBlur}
+                    // onBl={formik.handleBlur}
                   />
                   {formik.touched.password && formik.errors.password ? (
                     <div className="error">{formik.errors.password}</div>

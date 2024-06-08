@@ -1,5 +1,9 @@
-import React from "react";
-import { Table } from "antd";
+import React, { useEffect } from "react";
+import { Table, ConfigProvider } from "antd";
+import { BiSolidEdit } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { getBlogs } from "../features/blog/blogSlice";
 
 const columns = [
   {
@@ -7,34 +11,95 @@ const columns = [
     dataIndex: "key",
   },
   {
-    title: "Tên KH",
-    dataIndex: "name",
+    title: "Tiêu đề",
+    dataIndex: "title",
   },
   {
-    title: "Sản phẩm",
-    dataIndex: "product",
+    title: "Hình ảnh",
+    dataIndex: "url_img_blog",
+    render: (url_img_blog) => (
+      <img src={url_img_blog} alt="Blog" style={{ width: "100px" }} />
+    ),
   },
   {
-    title: "Trạng thái",
-    dataIndex: "status",
+    title: "Danh mục",
+    dataIndex: "category",
+  },
+  {
+    title: "Ngày tạo",
+    dataIndex: "created_at",
+    defaultSortOrder: "",
+    sorter: (a, b) => a.created_at_raw - b.created_at_raw,
+  },
+  {
+    title: "Hành động",
+    dataIndex: "actions",
+    align: "center",
   },
 ];
-const data1 = [];
-for (let i = 1; i < 46; i++) {
-  data1.push({
-    key: i,
-    name: `Edward King ${i}`,
-    product: 32,
-    status: `London, Park Lane no. ${i}`,
-  });
-}
 
 const Bloglist = () => {
+  const imageURLPrefix = process.env.REACT_APP_IMAGE_URL_PREFIX;
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getBlogs());
+  }, [dispatch]);
+
+  const blogState = useSelector((state) => state.blog.blogs);
+
+  const data = blogState.map((blog, index) => {
+    const url_img_blog =
+      Array.isArray(blog.images) && blog.images.length > 0
+        ? `${imageURLPrefix}${blog.images[0].url}`
+        : null;
+    return {
+      key: index + 1,
+      title: blog.title,
+      url_img_blog: url_img_blog,
+      category: blog.category,
+      created_at: new Date(blog.createdAt).toLocaleString("vi-VN", {
+        timeZone: "Asia/Ho_Chi_Minh",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+      created_at_raw: new Date(blog.createdAt).getTime(),
+      actions: (
+        <>
+          <button className="bg-transparent border-0 fs-5 text-primary">
+            <BiSolidEdit />
+          </button>
+          <button className="bg-transparent border-0 fs-5 text-primary ms-3">
+            <RiDeleteBin6Line />
+          </button>
+        </>
+      ),
+    };
+  });
+
   return (
     <div>
       <h3 className="mb-4">Danh sách tin tức</h3>
-      <Table columns={columns} dataSource={data1} />
-      <div></div>
+
+      <div>
+        <ConfigProvider
+          className="w-100"
+          theme={{
+            components: {
+              Table: {
+                rowHoverBg: "transparent",
+                fontFamily: "inherit",
+              },
+            },
+          }}
+        >
+          <Table columns={columns} dataSource={data} />
+        </ConfigProvider>
+      </div>
     </div>
   );
 };

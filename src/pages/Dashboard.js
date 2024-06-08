@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Table } from "antd";
+import { Table, ConfigProvider } from "antd";
 
 const Dashboard = () => {
   const data = [
@@ -196,12 +196,24 @@ const Dashboard = () => {
       <div className="mt-5">
         <h3 className="mb-4">Đơn đặt hàng gần đây</h3>
         <div>
-          <Table
-            bordered
-            columns={columns}
-            dataSource={data1}
-            pagination={{ pageSize: 7 }}
-          />
+          <ConfigProvider
+            className="w-100"
+            theme={{
+              components: {
+                Table: {
+                  rowHoverBg: "transparent",
+                  fontFamily: "inherit",
+                },
+              },
+            }}
+          >
+            <Table
+              bordered
+              columns={columns}
+              dataSource={data1}
+              pagination={{ pageSize: 7 }}
+            />
+          </ConfigProvider>
         </div>
       </div>
       {/* <div className="d-flex gap-3 justify-content-between"></div> */}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "antd";
+import { Table, ConfigProvider } from "antd";
 
 const columns = [
   {
@@ -33,8 +33,22 @@ const Orders = () => {
   return (
     <div>
       <h3 className="mb-4">Đơn hàng</h3>
-      <Table columns={columns} dataSource={data1} />
-      <div></div>
+
+      <div>
+        <ConfigProvider
+          className="w-100"
+          theme={{
+            components: {
+              Table: {
+                rowHoverBg: "transparent",
+                fontFamily: "inherit",
+              },
+            },
+          }}
+        >
+          <Table columns={columns} dataSource={data1} />
+        </ConfigProvider>
+      </div>
     </div>
   );
 };

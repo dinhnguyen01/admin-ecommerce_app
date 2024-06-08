@@ -21,10 +21,12 @@ body {
   font-family: inherit;
 }
 
-:where(.css-dev-only-do-not-override-3rel02).ant-menu,
-:where(.css-dev-only-do-not-override-3rel02)[class^="ant-table"],
-:where(.css-dev-only-do-not-override-3rel02).ant-table-wrapper .ant-table {
+.ant-menu {
   font-family: inherit;
+}
+
+.ant-btn > span {
+  line-height: 1;
 }
 
 main {
