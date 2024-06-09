@@ -42,15 +42,17 @@ const Customers = () => {
       name: `${customer.firstname} ${customer.lastname}`,
       email: customer.email,
       mobile: customer.mobile,
-      created_at: new Date(customer.createdAt).toLocaleString("vi-VN", {
-        timeZone: "Asia/Ho_Chi_Minh",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }),
+      created_at: new Date(customer.createdAt)
+        .toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+        .replace(" ", " - "),
       created_at_raw: new Date(customer.createdAt).getTime(),
     }));
 

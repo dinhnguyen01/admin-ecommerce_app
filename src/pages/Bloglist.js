@@ -58,15 +58,17 @@ const Bloglist = () => {
       title: blog.title,
       url_img_blog: url_img_blog,
       category: blog.category,
-      created_at: new Date(blog.createdAt).toLocaleString("vi-VN", {
-        timeZone: "Asia/Ho_Chi_Minh",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }),
+      created_at: new Date(blog.createdAt)
+        .toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+        .replace(" ", " - "),
       created_at_raw: new Date(blog.createdAt).getTime(),
       actions: (
         <>

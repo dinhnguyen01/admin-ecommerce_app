@@ -30,7 +30,7 @@ const Login = () => {
 
   const authState = useSelector((state) => state.auth);
 
-  const { user, isError, isSuccess, isLoading, message } = authState;
+  const { isSuccess, message } = authState;
 
   useEffect(() => {
     if (isSuccess) {
@@ -38,7 +38,7 @@ const Login = () => {
     } else {
       navigate("");
     }
-  }, [user, isError, isSuccess, isLoading, navigate]);
+  }, [isSuccess, navigate]);
 
   return (
     <div className="login-page">
