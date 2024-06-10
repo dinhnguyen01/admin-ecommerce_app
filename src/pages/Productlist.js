@@ -80,10 +80,10 @@ const Productlist = () => {
   ];
 
   const data = productState.map((product, index) => {
-    const url_img_product =
-      Array.isArray(product.images) && product.images.length > 0
-        ? `${imageURLPrefix}${product.images[0].url}`
-        : null;
+    const url_img_product = product.primaryImage
+      ? `${imageURLPrefix}${product.primaryImage}`
+      : null;
+
     return {
       key: index + 1,
       title: product.title,

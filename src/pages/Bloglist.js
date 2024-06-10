@@ -4,6 +4,7 @@ import { BiSolidEdit } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { getBlogs } from "../features/blog/blogSlice";
+import { base_img_url } from "../utils/base_url";
 
 const columns = [
   {
@@ -39,7 +40,7 @@ const columns = [
 ];
 
 const Bloglist = () => {
-  const imageURLPrefix = process.env.REACT_APP_IMAGE_URL_PREFIX;
+  const imageURLPrefix = base_img_url;
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -49,10 +50,9 @@ const Bloglist = () => {
   const blogState = useSelector((state) => state.blog.blogs);
 
   const data = blogState.map((blog, index) => {
-    const url_img_blog =
-      Array.isArray(blog.images) && blog.images.length > 0
-        ? `${imageURLPrefix}${blog.images[0].url}`
-        : null;
+    const url_img_blog = blog.primaryImage
+      ? `${imageURLPrefix}${blog.primaryImage}`
+      : null;
     return {
       key: index + 1,
       title: blog.title,

@@ -94,10 +94,13 @@ main::-webkit-scrollbar {
   padding: 40px;
 }
 
+.form-group {
+  margin-bottom: 20px; /* Khoảng cách giữa các ô nhập */
+}
+
 .error {
-  color: red;
-  font-size: 12px;
-  margin-top: -15px;
+  margin-top: 5px; /* Khoảng cách giữa phần error và ô nhập */
+  color: red; /* Màu sắc cho thông báo lỗi */
 }
 /* Admin page */
 

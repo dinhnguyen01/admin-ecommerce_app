@@ -6,16 +6,16 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/auth/authSlice";
 
+let schema = Yup.object({
+  email: Yup.string()
+    .email("Địa chỉ email không hợp lệ")
+    .required("Cần nhập email"),
+  password: Yup.string().required("Cần nhập mật khẩu"),
+});
+
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  let schema = Yup.object({
-    email: Yup.string()
-      .email("Địa chỉ email không hợp lệ")
-      .required("Cần nhập email"),
-    password: Yup.string().required("Cần nhập mật khẩu"),
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -30,13 +30,11 @@ const Login = () => {
 
   const authState = useSelector((state) => state.auth);
 
-  const { isSuccess, message } = authState;
+  const { isSuccess, isError } = authState;
 
   useEffect(() => {
     if (isSuccess) {
-      navigate("admin");
-    } else {
-      navigate("");
+      navigate("/admin");
     }
   }, [isSuccess, navigate]);
 
@@ -52,9 +50,7 @@ const Login = () => {
                   Đăng nhập vào tài khoản của bạn để tiếp tục
                 </p>
                 <div className="error text-center">
-                  {message.message === "Rejected"
-                    ? "Bạn không phải quản trị viên"
-                    : ""}
+                  {isError ? "Bạn không phải quản trị viên" : ""}
                 </div>
                 <form onSubmit={formik.handleSubmit}>
                   <CustomerInput

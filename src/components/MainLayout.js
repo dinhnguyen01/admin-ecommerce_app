@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { useNavigate, Outlet } from "react-router-dom";
@@ -13,6 +12,8 @@ import { TbCategoryPlus, TbCategory, TbLogs } from "react-icons/tb";
 import { IoIosColorPalette, IoMdColorFill } from "react-icons/io";
 import { CiChat1 } from "react-icons/ci";
 import { IoNotifications } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 const { Header, Sider, Content } = Layout;
 
@@ -25,6 +26,19 @@ const MainLayout = () => {
     setCollapsed(!collapsed);
   };
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout()) // Gọi hàm logout từ Redux Thunk
+      .then(() => {
+        // Xóa dữ liệu người dùng khỏi localStorage khi đăng xuất thành công
+        localStorage.removeItem("user");
+      })
+      .catch((error) => {
+        console.error("Logout failed:", error);
+        // Xử lý lỗi nếu có
+      });
+  };
   return (
     <Layout>
       <Sider width={250} trigger={null} collapsible collapsed={collapsed}>
@@ -199,43 +213,43 @@ const MainLayout = () => {
               </button>
               <ul className="dropdown-menu">
                 <li>
-                  <Link
+                  <button
                     className="dropdown-item"
                     to="#"
                     style={{ height: "auto", lineHeight: "1.5" }}
                   >
                     Thông tin
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
+                  <button
                     className="dropdown-item"
                     to="#"
                     style={{ height: "auto", lineHeight: "1.5" }}
                   >
                     Tin nhắn
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
+                  <button
                     className="dropdown-item"
                     to="#"
                     style={{ height: "auto", lineHeight: "1.5" }}
                   >
                     Cài đặt
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <Link
+                  <button
+                    onClick={handleLogout}
                     className="dropdown-item"
-                    to="#"
                     style={{ height: "auto", lineHeight: "1.5" }}
                   >
                     Đăng xuất
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>

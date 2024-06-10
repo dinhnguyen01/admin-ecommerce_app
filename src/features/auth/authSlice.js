@@ -26,6 +26,14 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async (thunkAPI) => {
+  try {
+    return await authService.logout();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 export const getOrders = createAsyncThunk(
   "order/get-orders",
   async (thunkAPI) => {
@@ -40,11 +48,7 @@ export const getOrders = createAsyncThunk(
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    setAuthenticated: (state, action) => {
-      state.isAuthenticated = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -55,6 +59,7 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.user = action.payload;
+        state.isAuthenticated = true;
         state.message = "success";
       })
       .addCase(login.rejected, (state, action) => {
@@ -77,6 +82,24 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(logout.pending, (state) => {
+        // Handle logout pending
+        state.isLoading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        // Handle logout fulfilled
+        state.isLoading = false;
+        state.isAuthenticated = false; // Update isAuthenticated to false
+        state.user = null; // Clear user data
+        state.orders = []; // Clear orders data
+        localStorage.removeItem("user"); // Remove user data from local storage
+      })
+      .addCase(logout.rejected, (state, action) => {
+        // Handle logout rejected
+        state.isLoading = false;
+        state.isError = true;
         state.message = action.error;
       });
   },
