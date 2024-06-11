@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import CustomInput from "../components/CustomInput";
 import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
@@ -11,8 +11,9 @@ import { getBrands } from "../features/brand/brandSlice";
 import { getPcategories } from "../features/pcategory/pcategorySlice";
 import { getColors } from "../features/color/colorSlice";
 import Dropzone from "react-dropzone";
-import { uploadImg } from "../features/upload/uploadSlice";
+import { delete_preImg, upload_preImg } from "../features/upload/uploadSlice";
 import { base_img_url } from "../utils/base_url";
+import { createProduct } from "../features/product/productSlice";
 
 let schema = Yup.object({
   title: Yup.string().required("Cần nhập tên sản phẩm"),
@@ -35,10 +36,11 @@ const AddProduct = () => {
     dispatch(getPcategories());
     dispatch(getColors());
   }, [dispatch]);
+
   const brandState = useSelector((state) => state.brand.brands);
   const pcategoryState = useSelector((state) => state.pcategory.pcategories);
   const colorState = useSelector((state) => state.color.colors);
-  const imageState = useSelector((state) => state.upload.images.resultFiles);
+  const imageState = useSelector((state) => state.upload.images);
 
   const options_brand = brandState.map((brand) => {
     return {
@@ -70,13 +72,27 @@ const AddProduct = () => {
       category: "",
       color: [],
       quantity: "",
+      images: [],
     },
     validationSchema: schema,
     onSubmit: (values) => {
       alert(JSON.stringify(values));
-      console.log(values);
+      // dispatch(createProduct(values));
     },
   });
+
+  const updateImagesField = useCallback(() => {
+    formik.setFieldValue(
+      "images",
+      imageState.map((img) => img.url)
+    );
+  }, [formik, imageState]);
+
+  useEffect(() => {
+    if (formik.values.images.length !== imageState.length) {
+      updateImagesField();
+    }
+  }, [updateImagesField, formik.values.images.length, imageState.length]);
 
   const handleEditorChange = (state) => {
     setEditorState(state);
@@ -84,6 +100,20 @@ const AddProduct = () => {
     const rawContentState = convertToRaw(contentState);
     const text = rawContentState.blocks.map((block) => block.text).join("\n");
     formik.setFieldValue("description", text);
+  };
+
+  const handleImageUpload = (acceptedFiles) => {
+    dispatch(upload_preImg(acceptedFiles));
+  };
+
+  const handleDeleteImage = (imageUrl) => {
+    const filename = extractFilename(imageUrl);
+    dispatch(delete_preImg(filename));
+  };
+
+  const extractFilename = (url) => {
+    const parts = url.split("/");
+    return parts[parts.length - 1];
   };
 
   return (
@@ -234,7 +264,7 @@ const AddProduct = () => {
           </div>
           <div className="bg-white border-1 rounded-2">
             <Dropzone
-              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+              onDrop={(acceptedFiles) => handleImageUpload(acceptedFiles)}
             >
               {({ getRootProps, getInputProps }) => (
                 <section>
@@ -247,19 +277,26 @@ const AddProduct = () => {
             </Dropzone>
           </div>
           <div className="show-images d-flex align-items-center gap-3">
-            {imageState.map((img, index) => (
-              <div
-                key={index}
-                className="image-item"
-                style={{ width: "200px" }}
-              >
-                <img
-                  className="img-fluid"
-                  src={imageURLPrefix + img.url}
-                  alt=""
-                />
-              </div>
-            ))}
+            {Array.isArray(imageState) &&
+              imageState.map((img, index) => (
+                <div
+                  key={index}
+                  className="image-item position-relative"
+                  style={{ width: "200px" }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteImage(img.url)}
+                    className="btn-close position-absolute"
+                    style={{ top: "5px", right: "5px", color: "Highlight" }}
+                  ></button>
+                  <img
+                    className="img-fluid"
+                    src={imageURLPrefix + img.url}
+                    alt=""
+                  />
+                </div>
+              ))}
           </div>
           <button
             className="btn btn-success border-0 rounded-3 my-2"
