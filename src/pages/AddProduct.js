@@ -35,6 +35,7 @@ const AddProduct = () => {
   const imageURLPrefix = base_img_url;
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const navigate = useNavigate();
 
@@ -54,13 +55,17 @@ const AddProduct = () => {
   const { isSuccess, isError, isLoading, createdProduct } = newProduct;
 
   useEffect(() => {
-    if (isSuccess && createProduct) {
-      toast.success("Thêm mới sản phẩm thành công");
+    if (hasSubmitted) {
+      if (isSuccess && createdProduct) {
+        toast.success("Thêm mới sản phẩm thành công");
+        setHasSubmitted(false);
+      }
+      if (isError) {
+        toast.error("Gặp vấn đề khi thêm mới sản phẩm!");
+        setHasSubmitted(false);
+      }
     }
-    if (isError) {
-      toast.error("Gặp vấn đề khi thêm mới sản phẩm!");
-    }
-  }, [isSuccess, isError, isLoading, createdProduct]);
+  }, [isSuccess, isError, isLoading, createdProduct, hasSubmitted]);
 
   const options_brand = brandState.map((brand) => {
     return {
@@ -114,7 +119,7 @@ const AddProduct = () => {
     validationSchema: schema,
     onSubmit: (values) => {
       dispatch(createProduct(values));
-      // console.log(JSON.stringify(values));
+      setHasSubmitted(true);
       formik.resetForm();
       setTimeout(() => {
         dispatch(resetState());

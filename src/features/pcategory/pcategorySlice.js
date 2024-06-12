@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import pcategoryService from "./pcategoryService";
 
 export const getPcategories = createAsyncThunk(
@@ -12,6 +12,17 @@ export const getPcategories = createAsyncThunk(
   }
 );
 
+export const createPcategory = createAsyncThunk(
+  "product-category/create-category",
+  async (pcategoryData, thunkAPI) => {
+    try {
+      return await pcategoryService.createPcategory(pcategoryData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   pcategories: [],
   isError: false,
@@ -19,6 +30,8 @@ const initialState = {
   isSuccess: false,
   message: "",
 };
+
+export const resetState = createAction("Reset_all");
 
 export const pcategorySlice = createSlice({
   name: "pcategories",
@@ -40,7 +53,23 @@ export const pcategorySlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-      });
+      })
+      .addCase(createPcategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createPcategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.createdPcategory = action.payload;
+      })
+      .addCase(createPcategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 
