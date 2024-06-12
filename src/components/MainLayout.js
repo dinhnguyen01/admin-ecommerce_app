@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { useNavigate, Outlet } from "react-router-dom";
@@ -264,6 +266,18 @@ const MainLayout = () => {
             borderRadius: borderRadiusLG,
           }}
         >
+          <ToastContainer
+            position="top-right"
+            autoClose={500}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <Outlet />
         </Content>
       </Layout>

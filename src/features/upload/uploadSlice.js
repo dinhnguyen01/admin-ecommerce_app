@@ -1,6 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import uploadService from "./uploadService";
 
+export const upload_primaryImg = createAsyncThunk(
+  "upload/image-primary",
+  async (data, thunkAPI) => {
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < data.length; i++) {
+        formData.append("files", data[i]);
+      }
+      return await uploadService.upload_preImg(formData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const upload_preImg = createAsyncThunk(
   "upload/image",
   async (data, thunkAPI) => {
@@ -28,8 +43,21 @@ export const delete_preImg = createAsyncThunk(
   }
 );
 
+export const delete_primaryImg = createAsyncThunk(
+  "delete/image-primary",
+  async (filename, thunkAPI) => {
+    try {
+      await uploadService.delete_preImg(filename);
+      return filename;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   images: [],
+  primaryImage: "",
   isError: false,
   isLoading: false,
   isSuccess: false,
@@ -57,6 +85,25 @@ export const uploadSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
+      .addCase(upload_primaryImg.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(upload_primaryImg.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        if (action.payload.resultFiles.length > 0) {
+          state.primaryImage = action.payload.resultFiles[0].url;
+        } else {
+          state.primaryImage = "";
+        }
+      })
+      .addCase(upload_primaryImg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
       .addCase(delete_preImg.pending, (state) => {
         state.isLoading = true;
       })
@@ -69,6 +116,21 @@ export const uploadSlice = createSlice({
         );
       })
       .addCase(delete_preImg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.payload;
+      })
+      .addCase(delete_primaryImg.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(delete_primaryImg.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.primaryImage = "";
+      })
+      .addCase(delete_primaryImg.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
