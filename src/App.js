@@ -20,6 +20,8 @@ import AddProdCat from "./pages/AddProdCat";
 import Productlist from "./pages/Productlist";
 import AddBrand from "./pages/AddBrand";
 import AddProduct from "./pages/AddProduct";
+import AddCoupon from "./pages/AddCoupon";
+import Couponlist from "./pages/Couponlist";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -39,6 +41,8 @@ function App() {
         >
           <Route index element={<Dashboard />}></Route>
           <Route path="enquiries" element={<Enquiries />}></Route>
+          <Route path="add-coupon" element={<AddCoupon />}></Route>
+          <Route path="coupons-list" element={<Couponlist />}></Route>
           <Route path="add-blog" element={<AddBlog />}></Route>
           <Route path="blog-list" element={<Bloglist />}></Route>
           <Route path="add-blog-category" element={<AddBlogCat />}></Route>
@@ -49,6 +53,7 @@ function App() {
           <Route path="color-list" element={<Colorlist />}></Route>
           <Route path="add-brand" element={<AddBrand />}></Route>
           <Route path="brand-list" element={<Brandlist />}></Route>
+          <Route path="brand/:id" element={<AddBrand />}></Route>
           <Route path="add-product-category" element={<AddProdCat />}></Route>
           <Route
             path="product-category-list"

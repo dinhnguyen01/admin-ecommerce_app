@@ -23,6 +23,39 @@ export const createPcategory = createAsyncThunk(
   }
 );
 
+export const getPcategory = createAsyncThunk(
+  "product-category/get-category",
+  async (id, thunkAPI) => {
+    try {
+      return await pcategoryService.getPcategory(id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updatePcategory = createAsyncThunk(
+  "product-category/update-category",
+  async (pcategory, thunkAPI) => {
+    try {
+      return await pcategoryService.updatePcategory(pcategory);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deletePcategory = createAsyncThunk(
+  "product-category/delete-category",
+  async (id, thunkAPI) => {
+    try {
+      return await pcategoryService.deletePcategory(id);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 const initialState = {
   pcategories: [],
   isError: false,
@@ -64,6 +97,51 @@ export const pcategorySlice = createSlice({
         state.createdPcategory = action.payload;
       })
       .addCase(createPcategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getPcategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getPcategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.pcategoryName = action.payload.title;
+      })
+      .addCase(getPcategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updatePcategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updatePcategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.updatedPcategory = action.payload;
+      })
+      .addCase(updatePcategory.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deletePcategory.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deletePcategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.deletedBrand = action.payload;
+      })
+      .addCase(deletePcategory.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

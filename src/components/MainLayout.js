@@ -9,6 +9,7 @@ import { AiOutlineProduct } from "react-icons/ai";
 import { FaUser, FaMicroblog, FaRegQuestionCircle } from "react-icons/fa";
 import { FaDatabase, FaCartPlus, FaCartShopping } from "react-icons/fa6";
 import { SlBadge } from "react-icons/sl";
+import { BiSolidCoupon } from "react-icons/bi";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { TbCategoryPlus, TbCategory, TbLogs } from "react-icons/tb";
 import { IoIosColorPalette, IoMdColorFill } from "react-icons/io";
@@ -125,6 +126,23 @@ const MainLayout = () => {
               key: "orders",
               icon: <FaCartShopping className="fs-5" />,
               label: "Đơn hàng",
+            },
+            {
+              key: "marketing",
+              icon: <BiSolidCoupon className="fs-5" />,
+              label: "Tiếp thị",
+              children: [
+                {
+                  key: "add-coupon",
+                  icon: <FaMicroblog className="fs-5" />,
+                  label: "Thêm mã giảm giá",
+                },
+                {
+                  key: "coupons-list",
+                  icon: <TbLogs className="fs-5" />,
+                  label: "Danh sách mã giảm giá",
+                },
+              ],
             },
             {
               key: "blogs",
@@ -268,7 +286,7 @@ const MainLayout = () => {
         >
           <ToastContainer
             position="top-right"
-            autoClose={500}
+            autoClose={700}
             hideProgressBar={false}
             newestOnTop={true}
             closeOnClick

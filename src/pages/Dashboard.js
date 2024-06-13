@@ -1,95 +1,26 @@
 import React from "react";
 import { ImArrowUpRight2, ImArrowDownRight2 } from "react-icons/im";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { Table, ConfigProvider } from "antd";
+import ReactEChartsCore from "echarts-for-react/lib/core";
+import * as echarts from "echarts/core";
+import { BarChart } from "echarts/charts";
+
+import {
+  GridComponent,
+  TooltipComponent,
+  TitleComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  BarChart,
+  CanvasRenderer,
+]);
 
 const Dashboard = () => {
-  const data = [
-    {
-      month: "Jan",
-      profit: 40,
-    },
-    {
-      month: "Feb",
-      profit: 30,
-    },
-    {
-      month: "Mar",
-      profit: 20,
-    },
-    {
-      month: "Apr",
-      profit: 27,
-    },
-    {
-      month: "May",
-      profit: 18,
-    },
-    {
-      month: "Jun",
-      profit: 23,
-    },
-    {
-      month: "Jul",
-      profit: 34,
-    },
-    {
-      month: "Aug",
-      profit: 20,
-    },
-    {
-      month: "Sep",
-      profit: 27,
-    },
-    {
-      month: "Oct",
-      profit: 89,
-    },
-    {
-      month: "Nov",
-      profit: 23,
-    },
-    {
-      month: "Dec",
-      profit: 34,
-    },
-  ];
-
-  const monthMapping = {
-    Jan: 1,
-    Feb: 2,
-    Mar: 3,
-    Apr: 4,
-    May: 5,
-    Jun: 6,
-    Jul: 7,
-    Aug: 8,
-    Sep: 9,
-    Oct: 10,
-    Nov: 11,
-    Dec: 12,
-  };
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const monthNumber = monthMapping[label];
-      return (
-        <div className="custom-tooltip">
-          <p className="label">{`Tháng ${monthNumber}: ${payload[0].value} triệu`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const columns = [
     {
       title: "STT",
@@ -117,6 +48,62 @@ const Dashboard = () => {
       status: `London, Park Lane no. ${i}`,
     });
   }
+
+  const getOption = () => {
+    return {
+      title: {
+        text: "Thống kê thu nhập",
+        left: "center",
+        textStyle: {
+          fontFamily: "Roboto",
+          fontSize: 23,
+        },
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
+        },
+      },
+      xAxis: {
+        type: "category",
+        data: [
+          "Tháng 1",
+          "Tháng 2",
+          "Tháng 3",
+          "Tháng 4",
+          "Tháng 5",
+          "Tháng 6",
+          "Tháng 7",
+          "Tháng 8",
+          "Tháng 9",
+          "Tháng 10",
+          "Tháng 11",
+          "Tháng 12",
+        ],
+        axisLabel: {
+          fontFamily: "Roboto",
+        },
+      },
+      yAxis: {
+        type: "value",
+        axisLabel: {
+          fontFamily: "Roboto",
+        },
+      },
+      series: [
+        {
+          data: [120, 200, 150, 80, 70, 110, 130, 120, 200, 150, 110, 130],
+          type: "bar",
+          barWidth: "50%", // Tăng khoảng cách giữa các cột
+          showBackground: true,
+          backgroundStyle: {
+            color: "rgba(180, 180, 180, 0.2)",
+          },
+        },
+      ],
+    };
+  };
 
   return (
     <div>
@@ -160,37 +147,16 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="mt-4 chart-profit">
-        <h3 className="mb-4">Thống kê thu nhập</h3>
-        <p className="ms-4 mb-2">Triệu đồng</p>
         <div className="chart-profit_wrapper">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              width={500}
-              height={300}
-              data={data}
-              margin={{
-                top: 5,
-                right: 5,
-                left: 5,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" tickSize={10} axisLine={false} />
-              <YAxis tickCount={5} axisLine={false} tickSize={0} />
-              <Tooltip
-                cursor={{ fill: "transparent" }}
-                content={<CustomTooltip />}
-              />
-              <Bar
-                dataKey="profit"
-                fill="#8884d8"
-                isAnimationActive={false}
-                barSize={35}
-                radius={[4, 4, 4, 4]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <ReactEChartsCore
+            style={{ width: "100%", height: "400px" }}
+            echarts={echarts}
+            option={getOption()}
+            notMerge={true}
+            lazyUpdate={true}
+            theme={"theme_name"}
+            // onEvents={{ renderer: "canvas" }}
+          />
         </div>
       </div>
       <div className="mt-5">
