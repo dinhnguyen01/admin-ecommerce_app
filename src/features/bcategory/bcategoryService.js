@@ -16,9 +16,31 @@ const createBcategory = async (bcategory) => {
   return response.data;
 };
 
+const getBcategory = async (id) => {
+  const response = await axios.get(`${base_url}blogcategory/${id}`, config);
+  return response.data;
+};
+
+const updateBcategory = async (bcategory) => {
+  const response = await axios.put(
+    `${base_url}blogcategory/${bcategory.id}`,
+    { title: bcategory.bcategoryData.title },
+    config
+  );
+  return response.data;
+};
+
+const deleteBcategory = async (id) => {
+  const response = await axios.delete(`${base_url}blogcategory/${id}`, config);
+  return response.data;
+};
+
 const bcategoryService = {
   getBcategories,
   createBcategory,
+  getBcategory,
+  updateBcategory,
+  deleteBcategory,
 };
 
 export default bcategoryService;

@@ -9,7 +9,7 @@ import { createCoupon, resetState } from "../features/coupons/couponSlice";
 
 let schema = Yup.object({
   name: Yup.string().required("Cần nhập tên thuơng hiệu"),
-  expiry: Yup.date().required("Cần nhập ngày tháng hết hạn"),
+  expiry: Yup.date().required("Cần nhập ngày tháng hết hạn").nullable(),
   discount: Yup.number()
     .required("Cần nhập số giảm giá")
     .typeError("Giảm giá phải là số"),
@@ -44,6 +44,7 @@ const AddCoupon = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
+      values.expiry = new Date(values.expiry);
       dispatch(createCoupon(values));
       setHasSubmitted(true);
       formik.resetForm();
@@ -78,7 +79,7 @@ const AddCoupon = () => {
           </div>
           <div>
             <CustomInput
-              type="date"
+              type="datetime-local"
               label="Nhập ngày hết hạn"
               i_id="coupon-expiry"
               name="expiry"

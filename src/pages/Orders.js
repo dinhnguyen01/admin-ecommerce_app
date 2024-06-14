@@ -5,6 +5,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../features/auth/authSlice";
+import moment from "moment";
 
 const columns = [
   {
@@ -60,17 +61,7 @@ const Orders = () => {
     return {
       key: index + 1,
       order_id: order._id.substring(0, 6),
-      created_at: new Date(order.createdAt)
-        .toLocaleString("vi-VN", {
-          timeZone: "Asia/Ho_Chi_Minh",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-        .replace(" ", " - "),
+      created_at: moment(order.createdAt).format("HH:mm:ss - DD/MM/YYYY"),
       customer_info: (
         <>
           {order.orderby.firstname} {order.orderby.lastname} <br />

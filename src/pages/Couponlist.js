@@ -1,9 +1,16 @@
-import React, { useEffect } from "react";
-import { Table, ConfigProvider } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, ConfigProvider, Modal, Input, Button, DatePicker } from "antd";
+import { toast } from "react-toastify";
 import { BiSolidEdit } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-import { getCoupons } from "../features/coupons/couponSlice";
+import {
+  getCoupons,
+  getCoupon,
+  updateCoupon,
+  deleteCoupon,
+} from "../features/coupons/couponSlice";
+import moment from "moment";
 
 const columns = [
   {
@@ -34,6 +41,12 @@ const columns = [
 ];
 
 const Couponlist = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentCoupon, setCurrentCoupon] = useState({});
+  const [originalCoupon, setOriginalCoupon] = useState({});
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [couponToDelete, setCouponToDelete] = useState(null);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getCoupons());
@@ -41,29 +54,90 @@ const Couponlist = () => {
 
   const couponState = useSelector((state) => state.coupon.coupons);
 
+  const handleEditClick = (id) => {
+    dispatch(getCoupon(id)).then((action) => {
+      if (action.payload) {
+        setCurrentCoupon(action.payload);
+        setOriginalCoupon(action.payload);
+        setIsModalOpen(true);
+      }
+    });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCurrentCoupon({});
+    setOriginalCoupon({});
+  };
+
+  const handleUpdateCoupon = () => {
+    if (
+      currentCoupon.name === originalCoupon.name &&
+      currentCoupon.expiry === originalCoupon.expiry &&
+      currentCoupon.discount === originalCoupon.discount
+    ) {
+      toast.info("Không có thay đổi nào được thực hiện.");
+      handleCloseModal();
+      return;
+    }
+
+    dispatch(
+      updateCoupon({
+        id: currentCoupon._id,
+        couponData: {
+          name: currentCoupon.name,
+          expiry: currentCoupon.expiry,
+          discount: currentCoupon.discount,
+        },
+      })
+    ).then(() => {
+      dispatch(getCoupons());
+      handleCloseModal();
+      toast.success("Cập nhật mã giảm giá thành công!");
+    });
+  };
+
+  const handleDeleteClick = (id) => {
+    const couponToDelete = couponState.find((coupon) => coupon._id === id);
+
+    if (couponToDelete && couponToDelete.name) {
+      setCouponToDelete(couponToDelete);
+      setIsDeleteModalVisible(true);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    dispatch(deleteCoupon(couponToDelete._id)).then(() => {
+      dispatch(getCoupons());
+      toast.success("Xóa mã giảm giá thành công!");
+      setIsDeleteModalVisible(false);
+    });
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalVisible(false);
+    setCouponToDelete(null);
+  };
+
   const data = couponState.map((coupon, index) => {
     return {
       key: index + 1,
       name: coupon.name,
-      expiry: new Date(coupon.expiry)
-        .toLocaleString("vi-VN", {
-          timeZone: "Asia/Ho_Chi_Minh",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-        .replace(" ", " - "),
+      expiry: moment(coupon.expiry).format("HH:mm:ss - DD/MM/YYYY"),
       expiry_raw: new Date(coupon.expiry).getTime(),
       discount: coupon.discount,
       actions: (
         <>
-          <button className="bg-transparent border-0 fs-5 text-primary">
+          <button
+            onClick={() => handleEditClick(coupon._id)}
+            className="bg-transparent border-0 fs-5 text-primary"
+          >
             <BiSolidEdit />
           </button>
-          <button className="bg-transparent border-0 fs-5 text-primary ms-3">
+          <button
+            onClick={() => handleDeleteClick(coupon._id)}
+            className="bg-transparent border-0 fs-5 text-primary ms-3"
+          >
             <RiDeleteBin6Line />
           </button>
         </>
@@ -89,6 +163,72 @@ const Couponlist = () => {
           <Table columns={columns} dataSource={data} />
         </ConfigProvider>
       </div>
+      <ConfigProvider
+        theme={{
+          token: {
+            fontFamily: "Roboto",
+            fontSize: 17,
+          },
+        }}
+      >
+        <Modal
+          title="Sửa mã giảm giá"
+          open={isModalOpen}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key="back" onClick={handleCloseModal}>
+              Hủy
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleUpdateCoupon}>
+              Cập nhật
+            </Button>,
+          ]}
+        >
+          <Input
+            className="mb-3"
+            id="edit_coupon_name"
+            value={currentCoupon.name}
+            onChange={(e) =>
+              setCurrentCoupon({ ...currentCoupon, name: e.target.value })
+            }
+            placeholder="Sửa mã giảm giá"
+          />
+          <DatePicker
+            className="mb-3"
+            showTime
+            format="HH:mm:ss DD/MM/YYYY"
+            // value={currentCoupon.expiry ? moment(currentCoupon.expiry) : null}
+            onChange={(value) => {
+              setCurrentCoupon({
+                ...currentCoupon,
+                expiry: value ? value.toISOString() : null,
+              });
+            }}
+            placeholder="Sửa ngày hết hạn"
+          />
+          <Input
+            className="mb-3"
+            id="edit_coupon_discount"
+            value={currentCoupon.discount}
+            onChange={(e) =>
+              setCurrentCoupon({ ...currentCoupon, discount: e.target.value })
+            }
+            placeholder="Sửa giảm giá"
+          />
+        </Modal>
+
+        <Modal
+          title="Xác nhận xóa"
+          open={isDeleteModalVisible}
+          onOk={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          okText="Xóa"
+          okType="danger"
+          cancelText="Hủy"
+        >
+          <p>Bạn có chắc chắn muốn xóa mã giảm giá "{couponToDelete?.name}"?</p>
+        </Modal>
+      </ConfigProvider>
     </div>
   );
 };

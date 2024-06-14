@@ -4,6 +4,7 @@ import { BiSolidEdit } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { getEnquiries } from "../features/enquiry/enquirySlice";
+import moment from "moment";
 
 const columns = [
   {
@@ -53,17 +54,7 @@ const Enquiries = () => {
       email: enquiry.email,
       mobile: enquiry.mobile,
       status: enquiry.status,
-      created_at: new Date(enquiry.createdAt)
-        .toLocaleString("vi-VN", {
-          timeZone: "Asia/Ho_Chi_Minh",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-        .replace(" ", " - "),
+      created_at: moment(enquiry.createdAt).format("HH:mm:ss - DD/MM/YYYY"),
       created_at_raw: new Date(enquiry.createdAt).getTime(),
       actions: (
         <>

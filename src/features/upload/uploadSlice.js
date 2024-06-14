@@ -16,6 +16,18 @@ export const upload_primaryImg = createAsyncThunk(
   }
 );
 
+export const delete_primaryImg = createAsyncThunk(
+  "delete/image-primary",
+  async (filename, thunkAPI) => {
+    try {
+      await uploadService.delete_preImg(filename);
+      return filename;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const upload_preImg = createAsyncThunk(
   "upload/image",
   async (data, thunkAPI) => {
@@ -33,18 +45,6 @@ export const upload_preImg = createAsyncThunk(
 
 export const delete_preImg = createAsyncThunk(
   "delete/image",
-  async (filename, thunkAPI) => {
-    try {
-      await uploadService.delete_preImg(filename);
-      return filename;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-export const delete_primaryImg = createAsyncThunk(
-  "delete/image-primary",
   async (filename, thunkAPI) => {
     try {
       await uploadService.delete_preImg(filename);
