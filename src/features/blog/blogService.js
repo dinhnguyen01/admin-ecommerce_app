@@ -17,9 +17,8 @@ const updateBlog = async (blog) => {
     `${base_url}blog/${blog.id}`,
     {
       title: blog.blogData.title,
-      description: blog.blogData.description,
       category: blog.blogData.category,
-      images: blog.blogData.images,
+      primaryImage: blog.blogData.primaryImage,
     },
     config
   );

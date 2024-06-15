@@ -1,114 +1,5 @@
-// import React, { useEffect } from "react";
-// import { Table, ConfigProvider } from "antd";
-// import { BiSolidEdit } from "react-icons/bi";
-// import { RiDeleteBin6Line } from "react-icons/ri";
-// import { useDispatch, useSelector } from "react-redux";
-// import { getBlogs } from "../features/blog/blogSlice";
-// import { base_img_url } from "../utils/base_url";
-// import moment from "moment";
-
-// const columns = [
-//   {
-//     title: "STT",
-//     dataIndex: "key",
-//   },
-//   {
-//     title: "Tiêu đề",
-//     dataIndex: "title",
-//   },
-//   {
-//     title: "Hình ảnh",
-//     dataIndex: "url_img_blog",
-//     render: (url_img_blog) => (
-//       <img src={url_img_blog} alt="Blog" style={{ width: "100px" }} />
-//     ),
-//   },
-//   {
-//     title: "Danh mục",
-//     dataIndex: "category",
-//   },
-//   {
-//     title: "Ngày tạo",
-//     dataIndex: "created_at",
-//     defaultSortOrder: "",
-//     sorter: (a, b) => a.created_at_raw - b.created_at_raw,
-//   },
-//   {
-//     title: "Hành động",
-//     dataIndex: "actions",
-//     align: "center",
-//   },
-// ];
-
-// const Bloglist = () => {
-//   const imageURLPrefix = base_img_url;
-
-//   const dispatch = useDispatch();
-//   useEffect(() => {
-//     dispatch(getBlogs());
-//   }, [dispatch]);
-
-//   const blogState = useSelector((state) => state.blog.blogs);
-
-//   const data = blogState.map((blog, index) => {
-//     const url_img_blog = blog.primaryImage
-//       ? `${imageURLPrefix}${blog.primaryImage}`
-//       : null;
-//     return {
-//       key: index + 1,
-//       title: blog.title,
-//       url_img_blog: url_img_blog,
-//       category: blog.category,
-//       created_at: moment(blog.createdAt).format("HH:mm:ss - DD/MM/YYYY"),
-//       created_at_raw: new Date(blog.createdAt).getTime(),
-//       actions: (
-//         <>
-//           <button className="bg-transparent border-0 fs-5 text-primary">
-//             <BiSolidEdit />
-//           </button>
-//           <button className="bg-transparent border-0 fs-5 text-primary ms-3">
-//             <RiDeleteBin6Line />
-//           </button>
-//         </>
-//       ),
-//     };
-//   });
-
-//   return (
-//     <div>
-//       <h3 className="mb-4">Danh sách tin tức</h3>
-
-//       <div>
-//         <ConfigProvider
-//           className="w-100"
-//           theme={{
-//             components: {
-//               Table: {
-//                 rowHoverBg: "transparent",
-//                 fontFamily: "inherit",
-//               },
-//             },
-//           }}
-//         >
-//           <Table columns={columns} dataSource={data} />
-//         </ConfigProvider>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Bloglist;
-
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  ConfigProvider,
-  Modal,
-  Input,
-  Button,
-  Upload,
-  Select,
-} from "antd";
+import { Table, ConfigProvider, Modal, Input, Button, Select } from "antd";
 import { toast } from "react-toastify";
 import { BiSolidEdit } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -121,12 +12,17 @@ import {
 } from "../features/blog/blogSlice";
 import { base_img_url } from "../utils/base_url";
 import moment from "moment";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import {
   upload_primaryImg,
   delete_primaryImg,
+  resetState_upload,
 } from "../features/upload/uploadSlice";
 import { getBcategories } from "../features/bcategory/bcategorySlice";
+import Dropzone from "react-dropzone";
+import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const columns = [
   {
@@ -167,6 +63,7 @@ const Bloglist = () => {
   const [originalBlog, setOriginalBlog] = useState({});
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -187,8 +84,22 @@ const Bloglist = () => {
   const handleEditClick = (id) => {
     dispatch(getBlog(id)).then((action) => {
       if (action.payload) {
-        setCurrentBlog(action.payload);
-        setOriginalBlog(action.payload);
+        const blog = action.payload;
+        setCurrentBlog(blog);
+        setOriginalBlog(blog);
+        if (blog.description) {
+          try {
+            const contentState = convertFromRaw(
+              JSON.stringify(blog.description)
+            );
+            setEditorState(EditorState.createWithContent(contentState));
+          } catch (error) {
+            console.error("Error parsing description JSON:", error);
+            setEditorState(EditorState.createEmpty());
+          }
+        } else {
+          setEditorState(EditorState.createEmpty());
+        }
         setIsModalOpen(true);
       }
     });
@@ -198,6 +109,7 @@ const Bloglist = () => {
     setIsModalOpen(false);
     setCurrentBlog({});
     setOriginalBlog({});
+    setEditorState(EditorState.createEmpty());
   };
 
   const handleUpdateBlog = () => {
@@ -254,41 +166,41 @@ const Bloglist = () => {
     return parts[parts.length - 1];
   };
 
-  const handleImageRemove = (blog) => {
-    const filename = extractFilename(blog.primaryImage);
-    dispatch(delete_primaryImg(filename)).then(() => {
-      dispatch(
-        updateBlog({
-          id: blog._id,
-          blogData: { ...blog, primaryImage: "" },
-        })
-      ).then(() => {
-        dispatch(getBlogs());
-        toast.success("Xóa hình ảnh thành công!");
-        if (currentBlog._id === blog._id) {
-          setCurrentBlog({ ...currentBlog, primaryImage: "" });
-        }
+  const handleImageRemove = (currentBlog) => {
+    const filename = extractFilename(currentBlog.primaryImage);
+    dispatch(delete_primaryImg(filename))
+      .then(() => {
+        const updatedBlog = { ...currentBlog, primaryImage: "" };
+        setCurrentBlog(updatedBlog);
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+        toast.error("Có lỗi xảy ra khi xóa ảnh!");
       });
-    });
   };
 
-  const handleImageUpload = (info) => {
-    if (info.file.status === "done") {
-      const uploadedImageUrl = info.file.response.url;
-      dispatch(upload_primaryImg(uploadedImageUrl)).then((action) => {
-        if (action.payload) {
-          setCurrentBlog({ ...currentBlog, primaryImage: action.payload.url });
+  const handleImageUpload = (acceptedFiles) => {
+    dispatch(upload_primaryImg(acceptedFiles))
+      .then((action) => {
+        const url_primaryImg = action.payload.resultFiles[0].url;
+        if (url_primaryImg) {
+          const updatedBlog = {
+            ...currentBlog,
+            primaryImage: url_primaryImg,
+          };
+          setCurrentBlog(updatedBlog);
         }
+        dispatch(resetState_upload());
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+        toast.error("Có lỗi xảy ra khi tải ảnh lên!");
       });
-    }
   };
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+  const handleEditorChange = (state) => {
+    setEditorState(state);
+  };
 
   const data = blogState.map((blog, index) => {
     const url_img_blog = blog.primaryImage
@@ -351,6 +263,7 @@ const Bloglist = () => {
           title="Sửa tin tức"
           open={isModalOpen}
           onCancel={handleCloseModal}
+          width="700px"
           footer={[
             <Button key="back" onClick={handleCloseModal}>
               Hủy
@@ -377,7 +290,7 @@ const Bloglist = () => {
             value={currentBlog.category}
             options={options_category}
             onChange={(value) =>
-              setCurrentBlog({ ...currentBlog, category: value })
+              setCurrentBlog({ ...currentBlog, category: value || "" })
             }
           />
           <div className="mb-3">
@@ -399,17 +312,35 @@ const Bloglist = () => {
                 </Button>
               </div>
             ) : (
-              <Upload
-                name="blogImage"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList={false}
-                action="/upload"
-                onChange={handleImageUpload}
+              <div
+                className="bg-white rounded-2 "
+                style={{ border: "1px solid rgba(0, 0, 0, 0.13)" }}
               >
-                {uploadButton}
-              </Upload>
+                <Dropzone
+                  onDrop={(acceptedFiles) => handleImageUpload(acceptedFiles)}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <section>
+                      <div {...getRootProps()} className="p-5 text-center">
+                        <input {...getInputProps()} />
+                        <p className="mb-0">
+                          Kéo thả file vào đây hoặc click để chọn ảnh chính
+                        </p>
+                      </div>
+                    </section>
+                  )}
+                </Dropzone>
+              </div>
             )}
+          </div>
+          <div className="editor">
+            <Editor
+              editorState={editorState}
+              onEditorStateChange={handleEditorChange}
+              wrapperClassName="wrapper-class"
+              editorClassName="editor-class"
+              toolbarClassName="toolbar-class"
+            />
           </div>
         </Modal>
 

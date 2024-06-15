@@ -32,9 +32,9 @@ export const getBlog = createAsyncThunk(
 );
 export const updateBlog = createAsyncThunk(
   "blog/update-blog",
-  async (brand, thunkAPI) => {
+  async (brandData, thunkAPI) => {
     try {
-      return await blogService.updateBlog(brand);
+      return await blogService.updateBlog(brandData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -106,9 +106,9 @@ export const blogSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.blogName = action.payload.title;
-        state.blogDesc = action.payload.description;
         state.blogCategory = action.payload.category;
         state.blogPrimaryImage = action.payload.primaryImage;
+        state.blogDesc = action.payload.description;
       })
       .addCase(getBlog.rejected, (state, action) => {
         state.isLoading = false;

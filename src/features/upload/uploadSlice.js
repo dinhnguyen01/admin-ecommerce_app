@@ -64,7 +64,7 @@ const initialState = {
   message: "",
 };
 
-export const resetState_upload = createAction("Reset_all");
+export const resetState_upload = createAction("Reset_upload_state");
 
 export const uploadSlice = createSlice({
   name: "images",
@@ -138,7 +138,14 @@ export const uploadSlice = createSlice({
         state.isSuccess = false;
         state.message = action.payload;
       })
-      .addCase(resetState_upload, () => initialState);
+      .addCase(resetState_upload, (state) => {
+        state.images = [];
+        state.primaryImage = "";
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = "";
+      });
   },
 });
 
